@@ -1,0 +1,7 @@
+INDEX VERSION 1.134
+C:\Users\pc_02\Desktop\recycle_eclipse\.metadata\.plugins\org.eclipse.jst.jsp.core\jspsearch\10850041.index
+\recycle\src\main\java
+C:\Users\pc_02\Desktop\recycle_eclipse\.metadata\.plugins\org.eclipse.jst.jsp.core\jspsearch\38641626.index
+\recycle\src\main\java
+C:\Users\pc_02\Desktop\recycle_eclipse\.metadata\.plugins\org.eclipse.jst.jsp.core\jspsearch\1431518610.index
+\recycle\src\main\java

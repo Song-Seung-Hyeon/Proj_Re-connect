@@ -1,0 +1,16 @@
+<%@ page import="javax.servlet.http.*,java.io.*,java.sql.*" %>
+<%@ page import="java.sql.*, java.io.*" %>
+<%@ page contentType="text/html;charset=UTF-8" language="java" %>
+<%@ page import="javax.servlet.http.HttpSession" %>
+<% request.setCharacterEncoding("utf-8"); %>
+<%
+    String sessionValue = "";
+    if (session.getAttribute("fullName") != null) {
+        // 세션이 있고 fullName이 존재하는 경우, 세션이 유효한 상태로 가정
+        sessionValue = "valid";
+    } else {
+        // 세션이 없거나 fullName이 없는 경우, 세션이 만료된 상태로 가정
+        sessionValue = "expired";
+    }
+    response.getWriter().write(sessionValue);
+%>

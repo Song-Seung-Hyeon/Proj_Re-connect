@@ -1,0 +1,104 @@
+<%@ page import="java.sql.*"%>
+<%@ page contentType="text/html;charset=UTF-8" language="java"%>
+<%@ page import="java.io.*,java.util.*"%>
+<%@ page import="javax.servlet.*,javax.servlet.http.*"%>
+<%request.setCharacterEncoding("utf-8");%>
+
+<%
+String userUID = (String) session.getAttribute("userUID");
+
+try {
+   Class.forName("com.mysql.cj.jdbc.Driver");
+   Connection conn = DriverManager.getConnection("jdbc:mysql://localhost:3306/recycle", "root", "znfntbt0!");
+
+   String selectQuery = "SELECT ul.*, ud.*, " + "GROUP_CONCAT(DISTINCT h.hobby_name) AS hobbies, "
+   + "GROUP_CONCAT(DISTINCT p.personality_name) AS personalities, "
+   + "GROUP_CONCAT(DISTINCT mv.values_name) AS marriage_values " + "FROM user_list ul "
+   + "LEFT JOIN user_detail ud ON ul.user_uid = ud.user_uid "
+   + "LEFT JOIN user_hobbies uh ON ul.user_uid = uh.user_id "
+   + "LEFT JOIN hobbies h ON uh.hobby_id = h.hobby_id "
+   + "LEFT JOIN user_personality up ON ul.user_uid = up.user_id "
+   + "LEFT JOIN personalities p ON up.personality_id = p.personality_id "
+   + "LEFT JOIN user_marriage_values umv ON ul.user_uid = umv.user_id "
+   + "LEFT JOIN marriage_values mv ON umv.values_id = mv.values_id " + // 수정된 부분
+   "WHERE ul.user_uid = ? " + "GROUP BY ul.user_uid";
+
+   PreparedStatement preparedStatement = conn.prepareStatement(selectQuery);
+   preparedStatement.setString(1, userUID);
+
+   ResultSet resultSet = preparedStatement.executeQuery();
+	
+   if (resultSet.next()) {
+      String userId = resultSet.getString("user_id");
+      String userPw = resultSet.getString("user_pw");
+      String userName = resultSet.getString("user_name");
+      int userGender = resultSet.getInt("user_gender");
+      String userBirth = resultSet.getString("user_birth");
+      String userPhone = resultSet.getString("user_phone");
+      String userEmail = resultSet.getString("user_email");
+      String userCountry = resultSet.getString("user_country");
+      String userCareer = resultSet.getString("user_career");
+      String userEducation = resultSet.getString("user_education");
+      String userHeight = resultSet.getString("user_height");
+      String userBody = resultSet.getString("user_body");
+      String userSalary = resultSet.getString("user_salary");
+      int userMarital = resultSet.getInt("user_marital");
+      int userChildren = resultSet.getInt("user_children");
+      int userChildrenCount = resultSet.getInt("user_children_count");
+      String userBlood = resultSet.getString("user_blood");
+      String userMBTI = resultSet.getString("user_mbti");
+      String userReligion = resultSet.getString("user_religion");
+      int userAlcohol = resultSet.getInt("user_alcohol");
+      String userAlcoholCount = resultSet.getString("user_alcohol_count");
+      int userSmoking = resultSet.getInt("user_smoking");
+      String userHobbies = resultSet.getString("hobbies");
+      String userPersonality = resultSet.getString("personalities");
+      String userMarriageValues = resultSet.getString("marriage_values");
+      String userIntroduce = resultSet.getString("user_introduce");
+      String userPhotoURL = resultSet.getString("photo_url");
+      String imageName = new File(userPhotoURL).getName();
+
+        // 가져온 정보를 프로필 페이지에 표시합니다.
+
+        // 값을 설정해서 다른 JSP 파일에서 사용할 수 있도록 request에 저장
+        request.setAttribute("userId", userId);
+        request.setAttribute("userPw", userPw);
+        request.setAttribute("userName", userName);
+        request.setAttribute("userGender", userGender);
+        request.setAttribute("userBirth", userBirth);
+        request.setAttribute("userPhone", userPhone);
+        request.setAttribute("userEmail", userEmail);
+        request.setAttribute("userCountry", userCountry);
+        request.setAttribute("userCareer", userCareer);
+        request.setAttribute("userEducation", userEducation);
+        request.setAttribute("userHeight", userHeight);
+        request.setAttribute("userBody", userBody);
+        request.setAttribute("userSalary", userSalary);
+        request.setAttribute("userMarital", userMarital);
+        request.setAttribute("userChildren", userChildren);
+        request.setAttribute("userChildrenCount", userChildrenCount);
+        request.setAttribute("userBlood", userBlood);
+        request.setAttribute("userMBTI", userMBTI);
+        request.setAttribute("userReligion", userReligion);
+        request.setAttribute("userAlcohol", userAlcohol);
+        request.setAttribute("userAlcoholCount", userAlcoholCount);
+        request.setAttribute("userSmoking", userSmoking);
+        request.setAttribute("userHobbies", userHobbies);
+        request.setAttribute("userPersonality", userPersonality);
+        request.setAttribute("userMarriageValues", userMarriageValues);
+        request.setAttribute("userIntroduce", userIntroduce);
+        request.setAttribute("userPhotoURL", userPhotoURL);
+        request.setAttribute("imageName", imageName);
+
+      String realPath = request.getServletContext().getRealPath("/images/") + imageName;
+%>
+<%
+}
+
+resultSet.close();
+preparedStatement.close();
+conn.close();
+} catch (Exception e) {
+out.println("Failed to fetch user information: " + e.getMessage());
+}
+%>

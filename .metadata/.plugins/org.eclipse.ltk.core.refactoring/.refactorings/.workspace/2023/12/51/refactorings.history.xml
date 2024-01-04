@@ -1,0 +1,4 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<session version="1.0">
+<refactoring comment="Delete resource &apos;recycle/src/main/webapp/WEB-INF/lib/json-20231013-javadoc.jar&apos;" deleteContents="false" description="Delete resource &apos;recycle/src/main/webapp/WEB-INF/lib/json-20231013-javadoc.jar&apos;" element1="/recycle/src/main/webapp/WEB-INF/lib/json-20231013-javadoc.jar" flags="7" id="org.eclipse.ltk.core.refactoring.delete.resources" resources="1" stamp="1703051371927"/>
+</session>

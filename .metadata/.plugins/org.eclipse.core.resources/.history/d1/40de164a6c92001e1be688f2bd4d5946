@@ -1,0 +1,93 @@
+<%@ page import="javax.servlet.http.*,java.io.*,java.sql.*"%>
+<%@ page import="java.sql.*, java.io.*"%>
+<%@ page contentType="text/html;charset=UTF-8" language="java"%>
+<%@ page import="javax.servlet.http.HttpSession"%>
+<%
+request.setCharacterEncoding("utf-8");
+%>
+
+<%
+
+String userUID = (String) session.getAttribute("userUID");
+
+//JDBC 드라이버 로드
+Class.forName("com.mysql.jdbc.Driver");
+
+//MySQL 데이터베이스 연결 정보
+String url = "jdbc:mysql://localhost:3306/recycle";
+String username = "root";
+String password = "znfntbt0!";
+
+Connection conn = null;
+Statement stmt = null;
+ResultSet rs = null;
+
+try {
+ conn = DriverManager.getConnection(url, username, password);
+ stmt = conn.createStatement();
+ rs = stmt.executeQuery("SELECT * FROM user_list");
+
+ // JSON 문자열 생성을 위한 StringBuilder
+ StringBuilder jsonData = new StringBuilder("[");
+ while (rs.next()) {
+     String userName = rs.getString("user_name");
+     String userHobbies = rs.getString("hobbies"); 
+     String userBlood = rs.getString("user_blood");
+     String userMBTI = rs.getString("user_mbti");
+     String userReligion = rs.getString("user_religion");
+     int userAlcohol = rs.getInt("user_alcohol");
+     int userSmoking = rs.getInt("user_smoking");
+     String userPersonality = rs.getString("personalities");
+     String userMarriageValues = rs.getString("marriage_values");
+
+     String alcoholString = (userAlcohol == 0) ? "비음주" : "음주";
+     String smokingString = (userSmoking == 0) ? "비흡연" : "흡연";
+
+
+     // JSON 배열에 해당 값을 추가
+     jsonData.append("{\"x\": \"").append(userName).append("\", \"value\": 5},");
+     jsonData.append("{\"x\": \"").append(userHobbies).append("\", \"value\": 1},");
+     jsonData.append("{\"x\": \"").append(userHobbies).append("\", \"value\": 1},");
+     jsonData.append("{\"x\": \"").append(userHobbies).append("\", \"value\": 1},");
+     jsonData.append("{\"x\": \"").append(userBlood).append("\", \"value\": 1},");
+     jsonData.append("{\"x\": \"").append(userMBTI).append("\", \"value\": 1},");
+     jsonData.append("{\"x\": \"").append(userReligion).append("\", \"value\": 1},");
+     jsonData.append("{\"x\": \"").append(alcoholString).append("\", \"value\": 2},");
+     jsonData.append("{\"x\": \"").append(smokingString).append("\", \"value\": 2},");
+     jsonData.append("{\"x\": \"").append(userPersonality).append("\", \"value\": 3},");
+     jsonData.append("{\"x\": \"").append(userPersonality).append("\", \"value\": 3},");
+     jsonData.append("{\"x\": \"").append(userPersonality).append("\", \"value\": 3},");
+     jsonData.append("{\"x\": \"").append(userMarriageValues).append("\", \"value\": 3},");
+     jsonData.append("{\"x\": \"").append(userMarriageValues).append("\", \"value\": 3},");
+     jsonData.append("{\"x\": \"").append(userMarriageValues).append("\", \"value\": 3},");
+     jsonData.append("{\"x\": \"").append(userMarriageValues).append("\", \"value\": 3},");
+     jsonData.append("{\"x\": \"").append(userMarriageValues).append("\", \"value\": 3},");
+
+ }
+
+
+
+ // 마지막 쉼표 제거 후 JSON 배열 닫기
+ if (jsonData.charAt(jsonData.length() - 1) == ',') {
+     jsonData.deleteCharAt(jsonData.length() - 1);
+ }
+ jsonData.append("]");
+
+ // 클라이언트로 JSON 형식의 데이터 출력
+ response.setContentType("application/json");
+ response.setCharacterEncoding("UTF-8");
+ response.getWriter().write(jsonData.toString());
+
+} catch (SQLException e) {
+ e.printStackTrace();
+} finally {
+ // 리소스 닫기
+ try {
+     if (rs != null) rs.close();
+     if (stmt != null) stmt.close();
+     if (conn != null) conn.close();
+ } catch (SQLException e) {
+     e.printStackTrace();
+ }
+}
+%>

@@ -1,0 +1,117 @@
+package recyclePackage;
+
+import java.io.*;
+import java.sql.*;
+import javax.servlet.ServletException;
+import javax.servlet.annotation.WebServlet;
+import javax.servlet.http.*;
+import javax.servlet.annotation.MultipartConfig;
+import javax.servlet.http.HttpServlet;
+
+@WebServlet("/html/AnswerBoardServlet")
+@MultipartConfig(
+	    fileSizeThreshold = 1024 * 1024 * 2,  // 2MB
+	    maxFileSize = 1024 * 1024 * 10,       // 10MB
+	    maxRequestSize = 1024 * 1024 * 50    // 50MB
+)
+public class AnswerBoardServlet extends HttpServlet {
+    private static final long serialVersionUID = 1L;
+
+    private static final String JDBC_DRIVER = "com.mysql.cj.jdbc.Driver";
+    private static final String DB_URL = "jdbc:mysql://192.168.0.71:3306/recycle";
+    private static final String DB_USER = "recycle";
+    private static final String DB_PASS = "1234";
+    
+    public void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+        response.setContentType("text/html; charset=utf-8");
+        request.setCharacterEncoding("utf-8");
+
+        // 사용자가 입력한 정보 가져오기
+        HttpSession userSession = request.getSession();
+        String userUID = (String) userSession.getAttribute("userUID");
+        String title = request.getParameter("board_title");
+        String content = request.getParameter("board_content");
+
+        Connection conn = null;
+        PreparedStatement pstmt = null;
+
+        try {
+            Class.forName(JDBC_DRIVER);
+            conn = DriverManager.getConnection(DB_URL, DB_USER, DB_PASS);
+
+            Part filePart = request.getPart("imageFile");
+            if (filePart != null && filePart.getSize() > 0) {
+                // 파일이 존재하고 크기가 0보다 큰 경우에만 저장
+                String uploadPath = request.getServletContext().getRealPath("/images");
+                String fileName = getFileName(filePart);
+                String fullPath = uploadPath + File.separator + fileName;
+
+                saveFileToServer(filePart, fullPath); // 서버에 파일 저장
+
+                String query = "INSERT INTO contact_question (contact_writer_id, contact_title, contact_content, question_pw, photo_url, contact_reg_date) VALUES (?, ?, ?, ?, ?, now())";
+                pstmt = conn.prepareStatement(query);
+
+                pstmt.setString(1, userUID);
+                pstmt.setString(2, title);
+                pstmt.setString(3, content);
+                pstmt.setString(5, fullPath);
+
+                pstmt.executeUpdate();
+            } else {
+                // 파일이 없는 경우에는 이미지 정보를 제외하고 저장
+                String query = "INSERT INTO contact_question (contact_writer_id, contact_title, contact_content, question_pw, contact_reg_date) VALUES (?, ?, ?, ?, now())";
+                pstmt = conn.prepareStatement(query);
+
+                pstmt.setString(1, userUID);
+                pstmt.setString(2, title);
+                pstmt.setString(3, content);
+
+                pstmt.executeUpdate();
+            }
+
+            // 성공 메시지 출력 혹은 리다이렉션 등의 작업 수행
+            response.sendRedirect("board_main.jsp");
+
+        } catch (SQLException | ClassNotFoundException e) {
+            e.printStackTrace();
+            response.getWriter().println("데이터 저장 중 오류가 발생했습니다.");
+        } finally {
+            try {
+                if (pstmt != null) pstmt.close();
+                if (conn != null) conn.close();
+            } catch (SQLException e) {
+                e.printStackTrace();
+            }
+        }
+    }
+
+    private void saveFileToServer(Part filePart, String fullPath) throws IOException {
+        OutputStream out = null;
+        InputStream fileContent = null;
+        
+        try {
+            out = new FileOutputStream(new File(fullPath));
+            fileContent = filePart.getInputStream();
+            
+            int read;
+            final byte[] bytes = new byte[1024];
+            
+            while ((read = fileContent.read(bytes)) != -1) {
+                out.write(bytes, 0, read);
+            }
+        } finally {
+            if (out != null) out.close();
+            if (fileContent != null) fileContent.close();
+        }
+    }
+
+    private String getFileName(final Part part) {
+        final String partHeader = part.getHeader("content-disposition");
+        for (String content : partHeader.split(";")) {
+            if (content.trim().startsWith("filename")) {
+                return content.substring(content.indexOf('=') + 1).trim().replace("\"", "");
+            }
+        }
+        return null;
+    }
+}

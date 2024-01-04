@@ -1,0 +1,77 @@
+body {
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh; /* 최소 높이를 화면 높이로 설정 */
+}
+
+main {
+  flex: 1; /* 주요 콘텐츠를 늘려 전체 화면을 차지하도록 함 */
+}
+
+footer {
+  flex-shrink: 0; /* footer가 내용보다 작아지지 않도록 함 */
+}
+.footer {
+  background: #1d3124;
+  height: auto;
+  padding: 1rem;
+  color: #fff;
+  z-index: 9;
+  
+}
+
+.footer-content {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-direction: column;
+  text-align: center;
+}
+.footer-socials {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 15px;
+  margin: 5px;
+}
+
+.footer-socials img {
+  padding: 5px;
+  border: 1px solid white;
+  border-radius: 100%;
+  width: 30px;
+}
+
+.footer-content p {
+  word-spacing: 2px;
+  text-transform: capitalize;
+}
+
+.footer-content span {
+  font-size: 14px;
+  opacity: 0.4;
+  font-weight: 200;
+}
+
+.footer-menu {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  font-size: 12px;
+}
+
+.footer-menu p a {
+  color: #a0c2ac;
+  font-size: 16px;
+  text-decoration: none;
+}
+
+.f-menu {
+  display: flex;
+  gap: 1rem;
+}
+
+.f-menu li a {
+  color: white;
+  font-size: 14px;
+}

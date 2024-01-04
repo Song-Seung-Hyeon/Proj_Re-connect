@@ -1,0 +1,83 @@
+@font-face {
+  font-family: 'Pretendard-Regular';
+  src: url('https://cdn.jsdelivr.net/gh/Project-Noonnu/noonfonts_2107@1.1/Pretendard-Regular.woff') format('woff');
+  font-weight: 400;
+  font-style: normal;
+}
+
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+  font-family: 'Pretendard-Regular';
+}
+.content{
+  display: flex;
+  flex-direction: column;
+  align-items: center; 
+  margin: auto;
+  padding-bottom: 10rem;
+}
+.title{
+  font-size: 40px;
+  margin-bottom: 1.5rem;
+  color: rgb(36, 36, 36);
+}
+.sub_title{
+  color: rgb(172, 172, 172);
+  margin-bottom: 4rem;
+  font-weight: 600;
+}
+.tab_nav li {
+  float: left;
+  width: 260px;
+  height: 50px;
+  box-sizing: border-box;
+  border: 1px solid #d3d3d3;
+  background-color: #fff;
+  text-align: center;
+  line-height: 48px;
+}
+ul, li {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+.current{
+  color: #A0C2AC;
+}
+.inner{
+  position: relative;
+}
+
+.box{    
+  background-position: center 0px;
+  background-size: cover;
+  display: flex;
+  flex-wrap: wrap; /* 이 부분을 수정합니다. */
+  justify-content: center;
+  /* background-color: #f5f5f5; */
+  border-radius: 1rem;
+  background-image: url("../images/list_img_3.svg");
+  width: 1000px;
+  height: 500px;
+  position: relative; 
+}
+.box .btn_p4 a {
+  color: white;
+  font-size: 16px;
+}
+.box .btn_p4 {
+  width: 15%;
+  text-align: center;
+  height: 45px;
+  font-size: 15px;
+  background-color: #a9ccb5;
+  border: 3px solid #ffffff;
+  border-radius: 3rem;
+  position: absolute; 
+  bottom: 40px; 
+  right: 50px; /* right 값에 단위(px 등) 추가 */
+  z-index: 90;
+  cursor: pointer;
+}

@@ -1,0 +1,287 @@
+<%@ page import="java.sql.*"%>
+<%@ page contentType="text/html;charset=UTF-8" language="java"%>
+<%@ page import="java.io.*,java.util.*"%>
+<%@ page import="javax.servlet.*,javax.servlet.http.*"%>
+<%
+request.setCharacterEncoding("utf-8");
+%>
+
+<!DOCTYPE html>
+<html lang="ko">
+
+<head>
+<title>마이프로필 | 마음을 다시 연결하는 결혼 정보 플랫폼 DASH</title>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<meta name="keyworeds"
+	content="결혼, wedding, 결혼정보업체, DASH, Re:Connect, 듀오, 가연," />
+<meta name="description"
+	content="안녕하세요, 마음을 다시 연결하는 결혼 정보 플랫폼 DASH 입니다." />
+<link rel="icon" href="../images/favicon.png" />
+<link rel="stylesheet" href="../CSS/profil.css" />
+<link rel="stylesheet" href="../CSS/footer_style.css" />
+<link rel="stylesheet" href="../CSS/reset.css" />
+<script
+	src="https://code.iconify.design/iconify-icon/1.0.7/iconify-icon.min.js"></script>
+<script
+	src="https://cdn.anychart.com/releases/8.10.0/js/anychart-bundle.min.js"></script>
+</head>
+
+<body>
+	<!-- 마이페이지 헤더 -->
+	<header class="account_header">
+		<div class="header_btn">
+			<div class="message_badge">
+				<button type="button" class="btn_messenger" onclick="">메신저</button>
+				<span class="push_num" style="display: none">0</span>
+			</div>
+			<div class="alarm_badge">
+				<button type="button" class="btn_alarm" onclick="">알림</button>
+				<span class="push_num" style="display: none">0</span>
+			</div>
+		</div>
+
+		<div class="member">
+			<button type="button" class="btn_member">
+				<div class="user_photo">
+					<figure class="user_img">
+						<img src="../images/Song.jpg" alt="user_img" />
+					</figure>
+				</div>
+			</button>
+
+			<div class="layer_member">
+				<ul>
+					<li><img src="../images/Song.jpg" alt="user_img" /><span>송승현</span>
+						<!-- 유저이미지, 이름 입력 --></li>
+					<li><a href="account.jsp"><span>개인정보 수정</span>
+						<iconify-icon icon="la:edit-solid" width="30"></iconify-icon></a></li>
+					<li><a href="../jsp/logout.jsp"><span>로그아웃</span>
+						<iconify-icon icon="material-symbols:logout" width="25"></iconify-icon></a>
+					</li>
+				</ul>
+			</div>
+		</div>
+	</header>
+
+	<!-- 마이페이지 사이드메뉴 -->
+	<div class="nav">
+		<a href="../index.jsp" id="logo2"> <img src="../images/logo.svg"
+			alt="logo" />
+		</a>
+		<ul class="gnb">
+			<li class="gnb-menu"><a href="profil.jsp" class="menu-btn">마이프로필</a>
+			</li>
+			<li class="gnb-menu"><a href="account.jsp" class="menu-btn">개인정보수정</a>
+			</li>
+			<li class="gnb-menu"><a href="authored_content.jsp"
+				class="menu-btn">내가 작성한 글</a></li>
+			<li class="gnb-menu"><a href="Likestatus.jsp" class="menu-btn">좋아요
+					현황</a></li>
+			<li class="gnb-menu"><a href="matching_current.jsp"
+				class="menu-btn">매칭현황</a></li>
+			<li class="gnb-menu"><a href="member_ship.jsp" class="menu-btn">멤버십</a>
+			</li>
+			<li class="gnb-menu"><a href="account_withdrawal.jsp"
+				class="menu-btn secession">회원탈퇴</a></li>
+		</ul>
+		<button type="button" class="nav-icon">
+			<iconify-icon icon="ph:list-fill"></iconify-icon>
+		</button>
+	</div>
+	<main>
+		<div class="container">
+			<div class="container_main">
+				<div class="content">
+					<h1>마이프로필</h1>
+					<div class="my_profil">
+						<%
+						String userUID = (String) session.getAttribute("userUID");
+
+						try {
+							Class.forName("com.mysql.cj.jdbc.Driver");
+							Connection conn = DriverManager.getConnection("jdbc:mysql://localhost:3306/recycle", "root", "znfntbt0!");
+
+							String selectQuery = "SELECT user_id, user_pw, user_name, user_gender, user_birth, user_phone, user_country, user_education FROM user_table WHERE user_uid = ?";
+							PreparedStatement preparedStatement = conn.prepareStatement(selectQuery);
+							preparedStatement.setString(1, userUID);
+
+							ResultSet resultSet = preparedStatement.executeQuery();
+
+							if (resultSet.next()) {
+								String userId = resultSet.getString("user_id");
+								String userPw = resultSet.getString("user_pw");
+								String userName = resultSet.getString("user_name");
+								String userGender = resultSet.getString("user_gender");
+								String userBirth = resultSet.getString("user_birth");
+								String userPhone = resultSet.getString("user_phone");
+								String userCountry = resultSet.getString("user_country");
+								String userEducation = resultSet.getString("user_education");
+
+								// 가져온 정보를 프로필 페이지에 표시합니다.
+						%>
+						<div class="my_profil_header">
+							<div class="photo_wrap">
+								<span class="photo" id="myhome_profile_photo"> <img
+									alt="" src="" />
+								</span> <span class="photo_border"></span>
+								<div class="photo_edit_btn" id="edit_menu">
+									<input type="file" id="profile_picture_input" accept="image/*"
+										style="display: none" />
+								</div>
+							</div>
+							<div id="wordcloud-container" style="width: 450px;"></div>
+						</div>
+						<div class="information">
+							<table class="information_table">
+								<tr>
+									<th>* 아이디</th>
+									<td><%= userId %></td>
+								</tr>
+								<tr>
+									<th>* 비밀번호</th>
+									<td><%= userPw %></td>
+								</tr>
+								<tr>
+									<th>* 이름</th>
+									<td><%= userName %></td>
+								</tr>
+								<tr>
+									<th>* 성별</th>
+									<td><%= userGender %></td>
+								</tr>
+								<tr>
+									<th>* 나이</th>
+									<td><%= userBirth %></td>
+								</tr>
+								<tr>
+									<th>* 전화번호</th>
+									<td><%= userPhone %></td>
+								</tr>
+								<tr>
+									<th>* 학력</th>
+									<td>userEducation</td>
+								</tr>
+								<tr>
+									<th>* 직업</th>
+									<td>개발자</td>
+								</tr>
+							</table>
+							<table class="information_table">
+								<tr>
+									<th>거주지역</th>
+									<td>userCountry</td>
+								</tr>
+								<tr>
+									<th>키</th>
+									<td>158cm</td>
+								</tr>
+								<tr>
+									<th>체형</th>
+									<td>보통</td>
+								</tr>
+								<tr>
+									<th>연봉</th>
+									<td>4천만원 이상 ~ 5천만원 미만</td>
+								</tr>
+								<tr>
+									<th>혼인여부</th>
+									<td>초혼</td>
+								</tr>
+								<tr>
+									<th>자녀여부</th>
+									<td></td>
+								</tr>
+								<tr>
+									<th>관심사</th>
+									<td>여행 / 캠핑 / 반려동물</td>
+								</tr>
+								<tr>
+									<th>혈액형</th>
+									<td>AB형</td>
+								</tr>
+								<tr>
+									<th>MBTI</th>
+									<td>ISTJ</td>
+								</tr>
+								<tr>
+									<th>종교</th>
+									<td>무교</td>
+								</tr>
+								<tr>
+									<th>음주</th>
+									<td>비음주</td>
+								</tr>
+								<tr>
+									<th>흡연</th>
+									<td>비흡연</td>
+								</tr>
+								<tr>
+									<th>성격</th>
+									<td>고집 / 내향성 / 솔직함</td>
+								</tr>
+								<tr>
+									<th>결혼가치관</th>
+									<td>정직 / 신뢰 / 경제적안정 / 자유 / 유머감각</td>
+								</tr>
+								<tr>
+									<th>자기소개</th>
+									<td><textarea class="about_me" maxlength="500"></textarea>
+									</td>
+								</tr>
+							</table>
+							<%
+							}
+
+							resultSet.close();
+							preparedStatement.close();
+							conn.close();
+							} catch (Exception e) {
+							out.println("Failed to fetch user information: " + e.getMessage());
+							}
+							%>
+						</div>
+						<div class="amend_box">
+							<a href="account.jsp"><button type="button" class="amend_btn">수정하기</button></a>
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+	</main>
+	<!-- 아래 footer 하단 고정 -->
+	<footer class="footer">
+		<div class="footer-content">
+			<h3>(주)Re:connect</h3>
+			<span>대표 : Recycle</span> <span>사업자등록번호 : 999-99-99999</span> <span>주소
+				: (34838)대전광역시 중구 중앙로121번길 20 (선화동 41) 2층</span> <span>Tel.042-222-2402</span>
+			<ul class="footer-socials">
+				<li><a href="index_logout.jsp"><img
+						src="../images/ico_image.svg" alt="ico_image" /></a> <!-- 임시로 로그아웃 넣어 놨음 -->
+				</li>
+				<li><a href="account_manager.jsp"><img
+						src="../images/ico_instagram.svg" alt="ico_instagram" /></a> <!-- 임시로 커플매니저페이지 넣어 놨음 -->
+				</li>
+				<li><a href="admin_manager_management.jsp"><img
+						src="../images/ico_youtube.svg" alt="ico_youtube" /></a> <!-- 임시로 관리자페이지 넣어 놨음 -->
+				</li>
+			</ul>
+			<div class="footer-menu">
+				<p>
+					copyright &copy;2023 by <a href="../index.jsp">Re:connect.</a> All
+					pictures cannot be copied without permission.
+				</p>
+				<ul class="f-menu">
+					<li><a href="index.jsp">Home</a></li>
+					<li><a href="dash.jsp">About</a></li>
+					<li><a href="estimate.jsp">Contact</a></li>
+					<li><a href="FAQ.jsp">FAQ</a></li>
+				</ul>
+			</div>
+		</div>
+	</footer>
+	<script src="../script/profil.js"></script>
+
+</body>
+
+</html>
